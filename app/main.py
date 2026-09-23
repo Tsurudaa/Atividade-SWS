@@ -1,4 +1,9 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from .database import engine, get_db
@@ -23,8 +28,48 @@ from .dependencies import (
     admin_ou_operador
 )
 
+load_dotenv()
+
 
 Base.metadata.create_all(bind=engine)
+
+def criar_admin_inicial():
+    db = next(get_db())
+
+    try:
+        admin_email = os.getenv("ADMIN_EMAIL")
+        admin_password = os.getenv("ADMIN_PASSWORD")
+        admin_name = os.getenv("ADMIN_NAME", "Administrador")
+
+        if not admin_email or not admin_password:
+            print("Administrador inicial não configurado no .env.")
+            return
+
+        admin_existente = (
+            db.query(Usuario)
+            .filter(Usuario.email == admin_email)
+            .first()
+        )
+
+        if admin_existente:
+            return
+
+        admin = Usuario(
+            nome=admin_name,
+            email=admin_email,
+            senha_hash=gerar_hash_senha(admin_password),
+            perfil="admin"
+        )
+
+        db.add(admin)
+        db.commit()
+
+        print("Administrador inicial criado.")
+
+    finally:
+        db.close()
+
+criar_admin_inicial()
 
 
 app = FastAPI(
@@ -33,12 +78,16 @@ app = FastAPI(
     version="1.0.0"
 )
 
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static"
+)
+
 
 @app.get("/")
 def home():
-    return {
-        "mensagem": "API de Gestão de Usuários funcionando!"
-    }
+    return FileResponse("static/index.html")
 
 
 @app.post(

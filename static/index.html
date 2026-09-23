@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <section id="login-section">
+            <h1>Login</h1>
+
+            <input
+                type="email"
+                id="login-email"
+                placeholder="E-mail"
+            >
+
+            <input
+                type="password"
+                id="login-senha"
+                placeholder="Senha"
+            >
+
+            <button onclick="login()">Entrar</button>
+
+            <p id="login-mensagem"></p>
+        </section>
+
+
+        <section id="app-section" class="hidden">
+
+            <div class="topo">
+                <div>
+                    <h1>Gestão de Usuários</h1>
+                    <p id="usuario-logado"></p>
+                </div>
+
+                <button onclick="logout()">Sair</button>
+            </div>
+
+
+            <div id="cadastro-section">
+                <h2>Novo usuário</h2>
+
+                <input
+                    type="text"
+                    id="nome"
+                    placeholder="Nome"
+                >
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="E-mail"
+                >
+
+                <input
+                    type="password"
+                    id="senha"
+                    placeholder="Senha"
+                >
+
+                <select id="perfil">
+                    <option value="cliente">Cliente</option>
+                    <option value="operador">Operador</option>
+                    <option value="admin">Administrador</option>
+                </select>
+
+                <button onclick="criarUsuario()">
+                    Cadastrar
+                </button>
+            </div>
+
+
+            <h2>Usuários</h2>
+
+            <button onclick="carregarUsuarios()">
+                Atualizar lista
+            </button>
+
+            <div id="usuarios"></div>
+
+            <h2>Resposta da API</h2>
+            <pre id="resposta-api"></pre>
+
+        </section>
+
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
